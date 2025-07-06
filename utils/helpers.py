@@ -14,19 +14,19 @@ def read_excel(file_stream: BytesIO) -> pd.DataFrame | None:
 def get_category_config(category: str) -> dict | None:
     return {
         'upload_managers': {
-            'url': f'{URL_WEB_SITE}api/v1/activities/',
+            'url': f'{URL_WEB_SITE}/api/v1/activities/',
             'columns': ['Код активности', 'Название активности', 'Сервис-менеджер']
         },
         'upload_cases': {
-            'url': f'{URL_WEB_SITE}api/v1/cases/',
-            'columns': ['Код', 'Создано', 'Приоритет', 'Статус', 'Тема', 'Описание', 'Автор', 'Исполнитель', 'Активность', 'Описание решения']
+            'url': f'{URL_WEB_SITE}/api/v1/cases/',
+            'columns': ['Код', 'Создано', 'Дата решения', 'Приоритет', 'Статус', 'Тема', 'Описание', 'Автор', 'Исполнитель', 'Активность', 'Вендор', 'Рабочая группа', 'Описание решения', 'Код решения', 'Организация']
         },
         'upload_engineers': {
-            'url': f'{URL_WEB_SITE}api/v1/users/',
-            'columns': ['username', 'first_name']
+            'url': f'{URL_WEB_SITE}/api/v1/users/',
+            'columns': ['Почта', 'ФИ']
         },
         'download_xlsx': {
-            'url': f'{URL_WEB_SITE}api/v1/activities/export/',
+            'url': f'{URL_WEB_SITE}/api/v1/activities/export/',
             'columns': []
         }
     }.get(category)

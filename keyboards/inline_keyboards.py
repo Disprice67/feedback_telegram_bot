@@ -1,5 +1,5 @@
 from aiogram.types import InlineKeyboardMarkup, InlineKeyboardButton
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, time
 
 
 WEEKDAYS_RU = {
@@ -15,19 +15,30 @@ WEEKDAYS_RU = {
 
 def emails_start_inline_keyboard():
     """Устанавливаем дату начала опроса, исключая выходные."""
-    keyboards = []
-    date = datetime.today()
 
+    keyboards = []
+    now = datetime.now()
+
+    if now.time() < time(12, 0):
+        start_date = now.date()
+    else:
+        start_date = now.date() + timedelta(days=1)
+
+    days_added = 0
     while len(keyboards) < 5:
-        if date.weekday() < 5:
-            formatted_date = date.strftime('%d.%m.%Y')
-            weekday_ru = WEEKDAYS_RU[date.weekday()]
-            keyboards.append([InlineKeyboardButton(text=f"{formatted_date} ({weekday_ru})", 
-                                                   callback_data=f'start_{formatted_date}')])
-        date += timedelta(days=1)
+        current_date = start_date + timedelta(days=days_added)
+
+        if current_date.weekday() < 5:
+            formatted_date = current_date.strftime('%d.%m.%Y')
+            weekday_ru = WEEKDAYS_RU[current_date.weekday()]
+            keyboards.append([InlineKeyboardButton(
+                text=f"{formatted_date} ({weekday_ru})", 
+                callback_data=f'start_{formatted_date}'
+            )])
+
+        days_added += 1
 
     return InlineKeyboardMarkup(inline_keyboard=keyboards)
-
 
 def emails_end_inline_keyboard(start_date: str):
     """Устанавливаем дату окончания опроса, исключая выходные."""
@@ -53,11 +64,23 @@ def emails_accept_settings_keyboard():
     ])
     return keyboards
 
+def cancel_existing_mailing_keyboard():
+    keyboards = InlineKeyboardMarkup(inline_keyboard=[
+        [InlineKeyboardButton(text="❌ Отменить", callback_data="cancel_existing_mailing")]
+    ])
+    return keyboards
+
+def cancel_existing_mailing_keyboard_restart():
+    keyboards = InlineKeyboardMarkup(inline_keyboard=[
+        [InlineKeyboardButton(text="❌ Отменить", callback_data="cancel_existing_mailing_restart")]
+    ])
+    return keyboards
 
 def setup_inline_keyboard():
     """Inline-кнопки для настроек."""
     return InlineKeyboardMarkup(inline_keyboard=[
         [InlineKeyboardButton(text="🔧 Рассылка", callback_data="setup_option_1")],
+        [InlineKeyboardButton(text="🚀 Начать тест", callback_data="settings_test")],
     ])
 
 
@@ -77,5 +100,4 @@ def information_inline_keyboard():
         [InlineKeyboardButton(text="ℹ️ Список опрашиваемых", callback_data="info_option_1")],
         [InlineKeyboardButton(text="ℹ️ Вопросы для проектов", callback_data="info_option_2")],
         [InlineKeyboardButton(text="ℹ️ Настройки рассылки", callback_data="info_option_3")],
-        [InlineKeyboardButton(text="ℹ️ Письмо для рассылки", callback_data="info_option_4")],
     ])

@@ -4,6 +4,7 @@ import asyncio
 from settings.config import BOT_TOKEN
 from handlers.commands import start, setup, upload, information, mailing
 from handlers.commands.start import set_bot_commands
+from middlewares.access import AccessMiddleware
 
 
 async def main():
@@ -15,6 +16,9 @@ async def main():
     dp.include_router(upload.upload_router)
     dp.include_router(information.information_router)
     dp.include_router(mailing.mailing_router)
+
+    dp.message.middleware(AccessMiddleware())
+
     await set_bot_commands(bot)
     await dp.start_polling(bot)
 
